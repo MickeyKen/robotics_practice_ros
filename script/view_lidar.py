@@ -28,15 +28,19 @@ class Subscribe_publishers(Publishsers):
         self.publisher = rospy.Publisher('/calcurated_pose', Pose2D, queue_size=10)
         self.message = Pose2D()
 
-    def callback(self, msg):
 
-        print msg.ranges[0]
-        x = np.random.randn(30)
-        y = np.sin(x) + np.random.randn(30)
-        plt.plot(msg.ranges[0], msg.ranges[1], "o")
+    def plot(self, x, y):
+
+        plt.plot(x, y, "o")
         plt.axis("equal")
         plt.draw()
         plt.pause(0.00000000001)
+
+
+    def callback(self, msg):
+
+        print msg.ranges[0]
+        self.plot(0.0,0.0)
         self.make_msg(0.0,0.0,0.0)
         self.send_msg()
 
