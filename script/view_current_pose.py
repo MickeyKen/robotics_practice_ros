@@ -32,11 +32,10 @@ class Subscribe_publishers(Publishsers):
 
     def plot(self, x, y):
 
-        plt.plot(x, y, "o")
+        plt.plot(x, y, 'o', c='red')
         plt.axis("equal")
         plt.draw()
         plt.pause(0.00000000001)
-
 
     def callback(self, msg):
 
