@@ -41,6 +41,8 @@ class Subscribe_publishers(Publishsers):
 
         print msg.ranges[0]
         self.plot(0.0,0.0)
+
+        # for publisher
         self.make_msg(0.0,0.0,0.0)
         self.send_msg()
 
@@ -49,8 +51,11 @@ def main():
     rospy.init_node('view_lidar')
 
     sub = Subscribe_publishers()
+
+    # for plotting
     plt.ion()
     plt.show()
+
     rospy.spin()
 
 if __name__ == '__main__':
