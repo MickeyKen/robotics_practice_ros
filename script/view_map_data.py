@@ -35,20 +35,21 @@ class Subscribe():
         self.width = msg.info.width
         self. height = msg.info.height
 
+        # initialize array for plotting
         plot_x = []
         plot_y = []
-        # print plot_x
-        # print plot_y
 
-
+        ### create x-y pose for plotting
         for i in range(len(msg.data)):
             occ = msg.data[i]
             # print occ
             if (occ == 100):
                 plot_x.append(i / self.width)
                 plot_y.append(i % self.width)
-        print len(plot_x)
-        print len(plot_y)
+
+        # print len(plot_x)
+        # print len(plot_y)
+
         self.plot(plot_x, plot_y)
 
 
