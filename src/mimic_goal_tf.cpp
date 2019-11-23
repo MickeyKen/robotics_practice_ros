@@ -29,7 +29,7 @@ void Mimic::goalCallback(const geometry_msgs::PoseStampedConstPtr& poses)
   transform.setOrigin( tf::Vector3(poses->pose.position.x, poses->pose.position.y, 0.0) );
   // transform.setOrigin(poses->pose.position);
   transform.setRotation( tf::Quaternion(poses->pose.orientation.x, poses->pose.orientation.y, poses->pose.orientation.z, poses->pose.orientation.w));
-  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "target", "point"));
+  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "target", "map"));
 
 }
 int main(int argc, char** argv)
