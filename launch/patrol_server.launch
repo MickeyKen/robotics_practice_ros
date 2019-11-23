@@ -2,6 +2,8 @@
     <!-- server node -->
     <node name="patrol_main_server" pkg="robotics_practice" type="patrol_main_server.py" output="screen"/>
 
+    <node name="goal_tf_broadcaster" pkg="robotics_practice" type="goal_tf_broadcaster" output="screen"/>
+
     <!-- rviz marker node -->
     <!-- <node name="patrol_frame" pkg="robotics_practice" type="patrol_frame.py" output="screen" /> -->
 
