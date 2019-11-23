@@ -7,6 +7,7 @@ import math
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import String, Bool
 from visualization_msgs.msg import Marker, MarkerArray
+from jsk_rviz_plugins.msg import Pictogram
 
 from actionlib_msgs.msg import GoalStatusArray
 from move_base_msgs.msg import MoveBaseActionResult
@@ -15,6 +16,10 @@ from ubiquitous_display_msgs.srv import PatrolCommandResponse
 
 
 class Publishers():
+
+    # def make_jsk_text_pub(self, name, x, y):
+    #     jsk_text_msg = Pictogram()
+    #     jsk_text_msg
 
     def make_goal_pub(self, x, y):
         goal_msg = PoseStamped()
@@ -25,32 +30,72 @@ class Publishers():
         self.goal_pub.publish(goal_msg)
 
     def make_frag_pub(self, x, y):
-       markerArray = MarkerArray()
+        markerArray = MarkerArray()
 
-       marker = Marker()
-       marker.header.frame_id = "/map"
-       marker.type = marker.SPHERE
-       marker.action = marker.ADD
-       marker.scale.x = 1.0
-       marker.scale.y = 1.0
-       marker.scale.z = 0.0
-       marker.color.a = 1.0
-       marker.color.r = 1.0
-       marker.color.g = 1.0
-       marker.color.b = 0.0
-       marker.pose.orientation.w = 1.0
-       marker.pose.position.x = x
-       marker.pose.position.y = y
-       marker.pose.position.z = 3.0
-       # marker.lifetime = -1
+        marker = Marker()
+        marker.header.frame_id = "/map"
+        marker.id = 1
+        marker.type = marker.CYLINDER
+        marker.action = marker.ADD
+        marker.scale.x = 0.6
+        marker.scale.y = 0.6
+        marker.scale.z = 0.1
+        marker.color.a = 1.0
+        marker.color.r = 0.0
+        marker.color.g = 1.0
+        marker.color.b = 1.0
+        marker.pose.orientation.w = 1.0
+        marker.pose.position.x = x
+        marker.pose.position.y = y
+        marker.pose.position.z = 0.05
+        # marker.lifetime = -1
+        markerArray.markers.append(marker)
 
-       markerArray.markers.append(marker)
-       self.goal_frag_pub.publish(markerArray)
+        marker = Marker()
+        marker.header.frame_id = "/map"
+        marker.id = 2
+        marker.type = marker.CYLINDER
+        marker.action = marker.ADD
+        marker.scale.x = 0.15
+        marker.scale.y = 0.15
+        marker.scale.z = 1.5
+        marker.color.a = 1.0
+        marker.color.r = 0.0
+        marker.color.g = 1.0
+        marker.color.b = 1.0
+        marker.pose.orientation.w = 1.0
+        marker.pose.position.x = x
+        marker.pose.position.y = y
+        marker.pose.position.z = 0.8
+        # marker.lifetime = -1
+        markerArray.markers.append(marker)
+
+        marker = Marker()
+        marker.header.frame_id = "/map"
+        marker.id = 3
+        marker.type = marker.SPHERE
+        marker.action = marker.ADD
+        marker.scale.x = 0.3
+        marker.scale.y = 0.3
+        marker.scale.z = 0.3
+        marker.color.a = 1.0
+        marker.color.r = 0.0
+        marker.color.g = 1.0
+        marker.color.b = 1.0
+        marker.pose.orientation.w = 1.0
+        marker.pose.position.x = x
+        marker.pose.position.y = y
+        marker.pose.position.z = 1.715
+        # marker.lifetime = -1
+        markerArray.markers.append(marker)
+        self.goal_frag_pub.publish(markerArray)
 
 
 class Subscribe(Publishers):
     def __init__(self):
         self.exit = 0
+
+        self.jsk_text_pub = rospy.Publisher('/goal_name', Pictogram, queue_size = 100)
 
         self.goal_frag_pub = rospy.Publisher('/goal_frag', MarkerArray, queue_size=100)
 
@@ -63,19 +108,6 @@ class Subscribe(Publishers):
         # Declaration Service Server
         self.server = rospy.Service("/patrol_server", PatrolCommand, self.service_callback)
 
-    ### callback function for amcl node (pose) ###
-    # def nav_callback(self, msg):
-    #     if msg.status_list:
-    #         status_id = msg.status_list[0].status
-    #
-    #         if status_id == 0 or status_id == 3:
-    #             self.exit = 1
-    #             print "go"
-    #         else:
-    #             self.exit = 0
-    #             print "wait"
-    #     else:
-    #         self.exit = 0
     def nav2_callback(self, msg):
         if msg.status:
             status_id = msg.status.status
@@ -92,6 +124,8 @@ class Subscribe(Publishers):
     def service_callback(self, req):
         x = float(req.goal_position.position.x)
         y = float(req.goal_position.position.y)
+        text = str(req.point.data)
+        # self.make_jsk_text_pub(text, x, y)
         self.make_frag_pub(x, y)
         self.make_goal_pub(x,y)
 
