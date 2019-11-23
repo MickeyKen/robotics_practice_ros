@@ -34,15 +34,16 @@ for texts in file_content:
     # name[count] = str(text[2])
     name.append(str(text[2]))
     count += 1
+print name[0], name[1], name[2]
 
 for loop in range(LOOP_NUM):
+    print loop % POINT_NUM
     x = float(goal_pos[loop % POINT_NUM][0])
     y = float(goal_pos[loop % POINT_NUM][1])
-    name = str(name[loop % POINT_NUM])
     req = PatrolCommandRequest()
     req.goal_position.position.x = x
     req.goal_position.position.y = y
-    req.point.data = name
+    req.point.data = name[loop % POINT_NUM]
     result = pat_ser(req)
     result = result.result.data
     print x, y, result
