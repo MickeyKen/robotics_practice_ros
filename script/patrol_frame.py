@@ -36,6 +36,7 @@ for texts in file_content:
     count += 1
 print name[0], name[1], name[2]
 
+
 for loop in range(LOOP_NUM):
     print loop % POINT_NUM
     x = float(goal_pos[loop % POINT_NUM][0])

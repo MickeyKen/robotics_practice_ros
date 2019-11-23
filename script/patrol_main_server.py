@@ -120,6 +120,12 @@ class Publishers():
         markerArray.markers.append(marker)
         self.goal_frag_pub.publish(markerArray)
 
+    def make_pan(self, name):
+
+        pan_msg = String()
+        pan_msg.data = "pan"
+        self.pan_pub.publish(pan_msg)
+
 
 class Subscribe(Publishers):
     def __init__(self):
@@ -128,6 +134,8 @@ class Subscribe(Publishers):
         self.jsk_text_pub = rospy.Publisher('/goal_name', Pictogram, queue_size = 100)
 
         self.goal_frag_pub = rospy.Publisher('/goal_frag', MarkerArray, queue_size=100)
+
+        self.pan_pub = rospy.Publisher('/navigation/pan', String, queue_size=10)
 
         # Declaration Publisher
         self.goal_pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=100)
@@ -164,6 +172,7 @@ class Subscribe(Publishers):
 
         print "Navigation .. "
         while True:
+            self.make_pan("pan")
             # print self.exit
             if self.exit == 1:
                 break
