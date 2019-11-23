@@ -151,6 +151,9 @@ include_directories(
 add_executable(mimic_goal_tf src/mimic_goal_tf.cpp)
 target_link_libraries(mimic_goal_tf ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
+add_executable(goal_tf_broadcaster src/goal_tf_broadcaster.cpp)
+target_link_libraries(goal_tf_broadcaster ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
