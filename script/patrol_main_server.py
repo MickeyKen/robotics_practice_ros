@@ -14,12 +14,42 @@ from move_base_msgs.msg import MoveBaseActionResult
 from ubiquitous_display_msgs.srv import PatrolCommand
 from ubiquitous_display_msgs.srv import PatrolCommandResponse
 
+import tf
+from geometry_msgs.msg import Quaternion, Vector3
 
 class Publishers():
 
-    # def make_jsk_text_pub(self, name, x, y):
-    #     jsk_text_msg = Pictogram()
-    #     jsk_text_msg
+    def euler_to_quaternion(self, euler):
+        """Convert Euler Angles to Quaternion
+
+        euler: geometry_msgs/Vector3
+        quaternion: geometry_msgs/Quaternion
+        """
+        q = tf.transformations.quaternion_from_euler(euler.x, euler.y, euler.z)
+        return Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
+
+    def make_jsk_text_pub(self, name, x, y):
+        qua = Quaternion()
+        qua = self.euler_to_quaternion(Vector3(0.0, -1.57, 0.0))
+        print qua
+        jsk_text_msg = Pictogram()
+        jsk_text_msg.header.stamp = rospy.Time.now()
+        jsk_text_msg.header.frame_id = "map"
+        jsk_text_msg.pose.position.x = x
+        jsk_text_msg.pose.position.y = y
+        jsk_text_msg.pose.position.z = 1.5
+        jsk_text_msg.pose.orientation.x = qua.x
+        jsk_text_msg.pose.orientation.y = qua.y
+        jsk_text_msg.pose.orientation.z = qua.z
+        jsk_text_msg.pose.orientation.w = qua.w
+        jsk_text_msg.character = name
+        jsk_text_msg.mode = 1
+        jsk_text_msg.color.b = 1.0
+        jsk_text_msg.color.g = 1.0
+        jsk_text_msg.color.a = 1.0
+        jsk_text_msg.action = 4
+        jsk_text_msg.speed = 0.3
+        self.jsk_text_pub.publish(jsk_text_msg)
 
     def make_goal_pub(self, x, y):
         goal_msg = PoseStamped()
@@ -58,7 +88,7 @@ class Publishers():
         marker.action = marker.ADD
         marker.scale.x = 0.15
         marker.scale.y = 0.15
-        marker.scale.z = 1.5
+        marker.scale.z = 1.0
         marker.color.a = 1.0
         marker.color.r = 0.0
         marker.color.g = 1.0
@@ -66,7 +96,7 @@ class Publishers():
         marker.pose.orientation.w = 1.0
         marker.pose.position.x = x
         marker.pose.position.y = y
-        marker.pose.position.z = 0.8
+        marker.pose.position.z = 0.55
         # marker.lifetime = -1
         markerArray.markers.append(marker)
 
@@ -85,7 +115,7 @@ class Publishers():
         marker.pose.orientation.w = 1.0
         marker.pose.position.x = x
         marker.pose.position.y = y
-        marker.pose.position.z = 1.715
+        marker.pose.position.z = 1.215
         # marker.lifetime = -1
         markerArray.markers.append(marker)
         self.goal_frag_pub.publish(markerArray)
@@ -124,8 +154,9 @@ class Subscribe(Publishers):
     def service_callback(self, req):
         x = float(req.goal_position.position.x)
         y = float(req.goal_position.position.y)
-        text = str(req.point.data)
-        # self.make_jsk_text_pub(text, x, y)
+        text = req.point.data
+        print text
+        self.make_jsk_text_pub(text, x, y)
         self.make_frag_pub(x, y)
         self.make_goal_pub(x,y)
 

@@ -34,7 +34,7 @@ class Subscribe():
         plot_y = []
 
         for i in range(len(self.map_data)):
-            
+
         self.plot(0.0,0.0)
 
         # for publisher
