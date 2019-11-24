@@ -15,7 +15,7 @@ class Waypoint(smach.State):
         smach.State.__init__(self, outcomes=['to_Pr', 'to_Na', 'success'])
         self.count = 0
 
-    def waypoint(self, userdata):
+    def executive(self, userdata):
 
         request = rospy.ServiceProxy('/patrol_waypoint', SmachCommand)
         req = Int16()
@@ -35,7 +35,7 @@ class Navigation(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['to_Wa', 'to_Em'])
 
-    def navigation(self, userdata):
+    def executive(self, userdata):
         sum = 0
         if sum == 0:
             return 'to_Wa'
@@ -46,7 +46,7 @@ class Projection(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['to_Wa', 'to_Em'])
 
-    def projection(self, userdata):
+    def executive(self, userdata):
         sum = 0
         if sum == 0:
             return 'to_Wa'
@@ -57,7 +57,7 @@ class Emergency(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['to_Wa'])
 
-    def emergecy(self, userdata):
+    def executive(self, userdata):
         sum = 0
         if sum == 0:
             return 'to_Wa'
@@ -71,33 +71,32 @@ if __name__ == '__main__':
     sm = smach.StateMachine(outcomes=['success'])
     with sm:
         ###start Search_and_Wander ###
-        pa_sub = smach.StateMachine(outcomes=['success'])
-        with pa_sub:
-            smach.StateMachine.add('Waypoint',Waypoint(),
-                                transitions={'to_Na':'Navigation',
-                                            'to_Pr': 'Projection',
-                                            'success': 'success'})
+        # pa_sub = smach.StateMachine(outcomes=['success'])
+        # with pa_sub:
+        smach.StateMachine.add('Waypoint',Waypoint(),
+                            transitions={'to_Na':'Navigation',
+                                        'to_Pr': 'Projection',
+                                        'success': 'success'})
 
-            smach.StateMachine.add('Navigation', Navigation(),
-                                transitions={'to_Wa':'Waypoint',
-                                'to_Em':'Emergency'})
+        smach.StateMachine.add('Navigation', Navigation(),
+                            transitions={'to_Wa':'Waypoint',
+                            'to_Em':'Emergency'})
 
-            smach.StateMachine.add('Projection', Projection(),
-                                transitions={'to_Wa':'Waypoint',
-                                'to_Em': 'Emergency'})
+        smach.StateMachine.add('Projection', Projection(),
+                            transitions={'to_Wa':'Waypoint',
+                            'to_Em': 'Emergency'})
 
-            smach.StateMachine.add('Emergency', Emergency(),
-                                transitions={'to_Wa':'Waypoint'})
+        smach.StateMachine.add('Emergency', Emergency(),
+                            transitions={'to_Wa':'Waypoint'})
 
-        smach.StateMachine.add('Patrol', pa_sub,
-                                transitions={'success': 'success'})
+    # smach.StateMachine.add('Waypoint', pa_sub,
+    #                         transitions={'success': 'success'})
 
 
-    sis = smach_ros.IntrospectionServer('Patrol_state_machine', sm, '/ROOT')
+    sis = smach_ros.IntrospectionServer('Patrol_state_machine', sm, '/SM_ROOT')
     sis.start()
-    rospy.sleep(1)
 
     result = sm.execute()
     rospy.loginfo('result: %s' % result)
     rospy.spin()
-    sis.stop()
+    # sis.stop()
