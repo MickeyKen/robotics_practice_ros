@@ -1,0 +1,7 @@
+<launch>
+
+    <!-- smach node -->
+    <node name="smach_node" pkg="robotics_practice" type="smach_tutorial.py" output="screen"/>
+    <node name="smach_viewer" pkg="smach_viewer" type="smach_viewer.py" output="screen" />
+
+</launch>

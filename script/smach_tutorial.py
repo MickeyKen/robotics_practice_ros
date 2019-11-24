@@ -12,7 +12,7 @@ from ubiquitous_display_msgs.srv import *
 # define state Foo
 class W(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['to_Na','outcome2'])
+        smach.State.__init__(self, outcomes=['to_Na','to_Pr','success'])
         self.counter = 0
 
     def execute(self, userdata):
@@ -26,13 +26,31 @@ class W(smach.State):
         if responce.result.data == "navigation":
             return 'to_Na'
         elif responce.result.data == "projection":
-            return 'to_Na'
+            return 'to_Pr'
         else:
-            return 'outcome2'
+            return 'success'
 
 
 # define state Bar
 class N(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['to_Wa','to_Em'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state BAR')
+        rospy.sleep(1)
+        return 'to_Wa'
+
+class P(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['to_Wa','to_Em'])
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state BAR')
+        rospy.sleep(1)
+        return 'to_Wa'
+
+class E(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['to_Wa'])
 
@@ -42,24 +60,30 @@ class N(smach.State):
         return 'to_Wa'
 
 
-
-
 # main
 def main():
     rospy.init_node('smach_example_state_machine')
 
     # Create a SMACH state machine
-    sm = smach.StateMachine(outcomes=['outcome4', 'outcome5'])
+    sm = smach.StateMachine(outcomes=['success'])
 
     # Open the container
     with sm:
         # Add states to the container
         smach.StateMachine.add('Waypoint', W(),
                                transitions={'to_Na':'Navigation',
-                                            'outcome2':'outcome4'})
+                                            'to_Pr':'Projection',
+                                            'success':'success'})
         smach.StateMachine.add('Navigation', N(),
-                               transitions={'to_Wa':'Waypoint'})
+                               transitions={'to_Wa':'Waypoint',
+                                            'to_Em':'Emergency'})
 
+        smach.StateMachine.add('Projection', P(),
+                               transitions={'to_Wa':'Waypoint',
+                                            'to_Em':'Emergency'})
+
+        smach.StateMachine.add('Emergency', E(),
+                               transitions={'to_Wa':'Waypoint'})
     # Create and start the introspection server
     sis = smach_ros.IntrospectionServer('server_name', sm, '/SM_ROOT')
     sis.start()
