@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import rospy, actionlib, math, tf, rospkg
+import rospy, math, tf, rospkg
 import numpy as np
 import smach
 import smach_ros
@@ -8,55 +8,61 @@ from smach_ros import ServiceState, SimpleActionState
 from geometry_msgs.msg import Pose, Quaternion, PoseStamped
 from std_msgs.msg import String
 
+from ubiquitous_display_msgs.srv import *
 
 class Waypoint(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['to_Pr', 'to_Na', 'success'])
+        self.count = 0
 
     def waypoint(self, userdata):
-        goal_pos = np.zeros((POINT_NUM, 2), dtype = 'float64')
-        name = []
 
-        file_name = "goal_points"
-        path = os.path.join(rospkg.RosPack().get_path('robotics_practice')+ '/txt', file_name)
-        filepath = os.path.splitext(path)[0] + '.txt'
-        file_content = open(filepath)
-        count = 0
-        for texts in file_content:
-            text = texts.replace('\n'," ")
-            text = texts.split(" ")
-            goal_pos[count][0] = float(text[0])
-            goal_pos[count][1] = float(text[1])
-            # name[count] = str(text[2])
-            name.append(str(text[2]))
-            count += 1
-            
-        if responce.result.data == "nohuman":
-            return 'to_Pa'
+        request = rospy.ServiceProxy('/patrol_waypoint', SmachCommand)
+        req = Int16()
+        req.data = self.count
+        responce = request(req)
+
+        self.count += 1
+
+        if responce.result.data == "navigation":
+            return 'to_Na'
+        elif responce.result.data == "projection":
+            return 'to_Pr'
         else:
-            rospy.set_param('/target_human/name', responce.result.data)
             return 'success'
 
 class Navigation(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['to_Pa', 'success'])
+        smach.State.__init__(self, outcomes=['to_Wa', 'to_Em'])
 
     def navigation(self, userdata):
-        pass
+        sum = 0
+        if sum == 0:
+            return 'to_Wa'
+        else:
+            return 'to_Em'
 
 class Projection(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['to_Pa', 'success'])
+        smach.State.__init__(self, outcomes=['to_Wa', 'to_Em'])
 
     def projection(self, userdata):
-        pass
+        sum = 0
+        if sum == 0:
+            return 'to_Wa'
+        else:
+            return 'to_Em'
 
-class Emergecy(smach.State):
+class Emergency(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['to_Pa', 'success'])
+        smach.State.__init__(self, outcomes=['to_Wa'])
 
     def emergecy(self, userdata):
-        pass
+        sum = 0
+        if sum == 0:
+            return 'to_Wa'
+        else:
+            pass
 
 if __name__ == '__main__':
 
