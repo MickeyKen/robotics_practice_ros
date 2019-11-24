@@ -53,7 +53,7 @@ class Subscribe(Publishers):
         count = req.count.data
         result = String()
 
-        if count > LOOP_NUM:
+        if count > LOOP_NUM-1:
             result.data = "False"
             return SmachCommandResponse(result)
         else:
@@ -61,7 +61,7 @@ class Subscribe(Publishers):
                 index = count / 2
                 x = float(self.goal_pos[index][0])
                 y = float(self.goal_pos[index][1])
-                point_name = name[index]
+                point_name = self.name[index]
                 rospy.set_param('goal_x', x)
                 rospy.set_param('goal_y', y)
                 rospy.set_param('goal_name', point_name)
