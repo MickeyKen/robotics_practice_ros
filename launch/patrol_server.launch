@@ -4,6 +4,7 @@
 
     <node name="goal_tf_broadcaster" pkg="robotics_practice" type="goal_tf_broadcaster" output="screen"/>
 
+    <node name="navigation_pan_server" pkg="robotics_practice" type="navigation_pan_server.py" output="screen"/>
     <!-- rviz marker node -->
     <!-- <node name="patrol_frame" pkg="robotics_practice" type="patrol_frame.py" output="screen" /> -->
 

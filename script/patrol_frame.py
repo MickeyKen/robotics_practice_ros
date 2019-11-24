@@ -13,7 +13,7 @@ LOOP_NUM = 2
 POINT_NUM = 3
 LOOP_NUM *= POINT_NUM
 
-rospy.init_node('patrol_main_server')
+rospy.init_node('patrol_frame')
 
 pat_ser = rospy.ServiceProxy('/patrol_server', PatrolCommand)
 

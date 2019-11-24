@@ -10,12 +10,12 @@ from std_msgs.msg import String, Float64
 from geometry_msgs.msg import Pose, Point, Quaternion
 
 # import message_filters
-
+from sensor_msgs.msg import JointState
 
 class Publishsers():
     def make_pan(self, angle):
         pan_msg = Float64()
-        pan_msg.data = angle
+        pan_msg.data = angle 
         self.dxl_pub.publish(pan_msg)
 
 
@@ -23,6 +23,12 @@ class Subscribe(Publishsers):
     def __init__(self):
 
         self.tf_listener = tf.TransformListener()
+
+        self.control_pan_rad = 0.0
+
+        self.RAD_STEP = radians(5)
+
+        self.OFFSET = radians(20)
 
         # try:
         #     self.tf_listener.waitForTransform('/pan_link', '/target', rospy.Time(), rospy.Duration(1000.0))
@@ -37,11 +43,29 @@ class Subscribe(Publishsers):
         # Declaration Subscriber
         self.pan_sub = rospy.Subscriber('/navigation/pan', String, self.callback)
 
+        self.DJSP_sub = rospy.Subscriber('/ubiquitous_display/joint_states', JointState, self.djspcallback)
+
+    def djspcallback(self, msg):
+        self.control_pan_rad = msg.position[3]
     ###  ###
     def callback(self, msg):
         (position, rotation) = self.get_odom()
         # print rotation[2]
-        self.make_pan(-rotation)
+        # self.make_pan(-rotation)
+        # if rotation > 0
+
+        if position.x > 0 + self.OFFSET:
+            self.control_pan_rad -= self.RAD_STEP
+            self.make_pan(self.control_pan_rad)
+            # print "+++"
+        elif position.x < 0 - self.OFFSET:
+            self.control_pan_rad += self.RAD_STEP
+            # print "---"
+            self.make_pan(self.control_pan_rad)
+        else:
+            # print "***"
+            pass
+
 
 
     def get_odom(self):
