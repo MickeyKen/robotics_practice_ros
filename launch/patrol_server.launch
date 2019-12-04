@@ -1,4 +1,6 @@
 <launch>
+
+    <include file="$(find robotics_practice)/launch/navigation_no_rviz.launch"/>
     <!-- server node -->
     <node name="patrol_main_server" pkg="robotics_practice" type="patrol_main_server.py" output="screen"/>
 
@@ -12,5 +14,6 @@
 
     <!-- load rviz config -->
     <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find robotics_practice)/rviz/patrol.rviz" /> -->
+
 
 </launch>
