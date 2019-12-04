@@ -57,7 +57,7 @@ class N(smach.State):
 
 class P(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['to_Wa'])
+        smach.State.__init__(self, outcomes=['to_Wa','to_Em'])
 
     def execute(self, userdata):
         x = rospy.get_param("goal_x")
@@ -66,12 +66,16 @@ class P(smach.State):
 
 class E(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['to_Wa','to_Em'])
+        smach.State.__init__(self, outcomes=['to_Wa'])
 
     def execute(self, userdata):
         rospy.loginfo('Executing state BAR')
         rospy.sleep(1)
-        return 'to_Wa'
+        num = 0
+        if num == 0:
+            return 'to_Wa'
+        else:
+            return 'to_Em'
 
 
 
