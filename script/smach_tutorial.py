@@ -60,8 +60,16 @@ class P(smach.State):
         smach.State.__init__(self, outcomes=['to_Wa','to_Em'])
 
     def execute(self, userdata):
-        x = rospy.get_param("goal_x")
-        y = rospy.get_param("goal_y")
+        req = PatrolCommandRequest()
+        pat_ser = rospy.ServiceProxy('/projection_server', PatrolCommand)
+        x = rospy.get_param("proj_x")
+        y = rospy.get_param("proj_y")
+
+        req.goal_position.position.x = x
+        req.goal_position.position.y = y
+        req.point.data = name
+
+        result = pat_ser(req)
         return 'to_Wa'
 
 class E(smach.State):
