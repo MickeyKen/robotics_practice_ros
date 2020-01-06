@@ -6,7 +6,7 @@
 
     <node name="goal_tf_broadcaster" pkg="robotics_practice" type="goal_tf_broadcaster" output="screen"/>
 
-    <node name="navigation_pan_server" pkg="robotics_practice" type="navigation_pan_server.py" output="screen"/>
+    <node name="navigation_pan_server" pkg="robotics_practice" type="pan_server.py" output="screen"/>
 
     <node name="waypoint_server" pkg="robotics_practice" type="waypoint_server.py" output="screen"/>
     <!-- rviz marker node -->

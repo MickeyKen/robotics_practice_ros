@@ -168,6 +168,8 @@ class Subscribe(Publishers):
         self.make_frag_pub(x, y)
         self.make_goal_pub(x,y)
 
+        rospy.set_param("/head_trace_server/flag", "on")
+
         self.exit = 0
 
         print "Navigation .. "
@@ -177,6 +179,7 @@ class Subscribe(Publishers):
             if self.exit == 1:
                 break
         print ("finish: navigation {0:4.0f}(m) {1:4.0f}(m)".format(x,y))
+        rospy.set_param("/head_trace_server/flag", "none")
 
         result = Bool()
         result.data = True
